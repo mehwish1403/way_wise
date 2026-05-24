@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--sand:#f5ede0;--clay:#c9794a;--earth:#6b4226;--deep:#1a1008;--sky:#3a7ca5;--gold:#e8a838;--white:#fdfaf5;--card-bg:rgba(255,255,255,0.92);--shadow:0 8px 32px rgba(26,16,8,0.13);--radius:18px;--font-head:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--sand);color:var(--deep);min-height:100vh;}
+  nav{position:sticky;top:0;z-index:1000;background:rgba(26,16,8,0.96);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:68px;box-shadow:0 2px 24px rgba(0,0,0,0.25);}
+  .nav-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:900;color:var(--gold);text-decoration:none;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:var(--sand);font-size:0.92rem;font-weight:500;text-decoration:none;padding:7px 16px;border-radius:50px;transition:background 0.2s;}
+  .nav-links a:hover,.nav-links a.active{background:var(--clay);color:#fff;}
+  .page-wrap{max-width:1100px;margin:0 auto;padding:48px 20px 80px;}
+  .page-title{font-family:var(--font-head);font-size:2rem;font-weight:900;color:var(--earth);margin-bottom:6px;}
+  .page-sub{color:#7a5a3a;font-size:0.98rem;margin-bottom:36px;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:32px;}
+  .stat-card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;border-top:4px solid var(--clay);}
+  .stat-label{font-size:0.78rem;font-weight:700;text-transform:uppercase;color:#a08060;}
+  .stat-value{font-family:var(--font-head);font-size:2.5rem;font-weight:900;color:var(--earth);}
+  .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;}
+  .card-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin-bottom:14px;color:var(--earth);}
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;font-size:0.78rem;font-weight:700;color:#a08060;text-transform:uppercase;padding:8px 12px;border-bottom:2px solid #f0e4d4;}
+  td{padding:12px;border-bottom:1px solid #f0e4d4;font-size:0.88rem;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:#fdfaf5;}
+  .badge{padding:3px 10px;border-radius:50px;font-size:0.72rem;font-weight:700;}
+  .badge-admin{background:#fef3d0;color:#7a5a00;}
+  .badge-user{background:#fce8dc;color:var(--earth);}
+  .btn{display:inline-flex;align-items:center;gap:4px;padding:6px 14px;border-radius:50px;border:none;font-family:var(--font-body);font-size:0.8rem;font-weight:600;cursor:pointer;text-decoration:none;transition:background 0.2s;}
+  .btn-sky{background:var(--sky);color:#fff;}.btn-sky:hover{background:#2a5c85;}
+  footer{background:var(--deep);color:rgba(245,237,224,0.6);text-align:center;padding:28px 20px;font-size:0.82rem;}
+  footer strong{color:var(--gold);}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">🌍 Waywise</a>
+  <div class="nav-links">
+    <a href="/">← Back to Site</a>
+    <a href="/admin" class="active">Dashboard</a>
+    <a href="/admin/users">Users</a>
+    <a href="/auth/logout">Logout</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <h1 class="page-title">⚙️ Admin Dashboard</h1>
+  <p class="page-sub">Welcome back, <%= user %>! Here's your site overview.</p>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value"><%= stats.totalUsers %></div></div>
+    <div class="stat-card" style="border-top-color:var(--sky);"><div class="stat-label">Total Trips</div><div class="stat-value"><%= stats.totalTrips %></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👥 Recent Users</div>
+    <% if (recentUsers.length === 0) { %>
+      <p style="color:#a08060;text-align:center;padding:20px;">No users yet.</p>
+    <% } else { %>
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        <% recentUsers.forEach(u => { %>
+        <tr>
+          <td><strong><%= u.name %></strong></td>
+          <td><%= u.email %></td>
+          <td><span class="badge badge-<%= u.role %>"><%= u.role %></span></td>
+          <td><%= new Date(u.createdAt).toLocaleDateString('en-IN') %></td>
+          <td><a href="/admin/users" class="btn btn-sky">View All</a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+  </div>
+</div>
+<footer>Made with ❤️ by <strong>Waywise</strong></footer>
+</body>
+</html>

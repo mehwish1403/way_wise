@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--sand:#f5ede0;--clay:#c9794a;--earth:#6b4226;--deep:#1a1008;--sky:#3a7ca5;--leaf:#4a7c59;--gold:#e8a838;--white:#fdfaf5;--card-bg:rgba(255,255,255,0.92);--shadow:0 8px 32px rgba(26,16,8,0.13);--radius:18px;--font-head:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--sand);color:var(--deep);min-height:100vh;}
+  nav{position:sticky;top:0;z-index:1000;background:rgba(26,16,8,0.96);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:68px;box-shadow:0 2px 24px rgba(0,0,0,0.25);}
+  .nav-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:900;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:8px;}
+  .nav-logo img{height:120px;width:auto;display:block;}
+  .nav-logo span{color:var(--sand);font-weight:400;font-size:1.1rem;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:var(--sand);font-size:0.92rem;font-weight:500;text-decoration:none;padding:7px 16px;border-radius:50px;transition:background 0.2s;}
+  .nav-links a:hover,.nav-links a.active{background:var(--clay);color:#fff;}
+  .nav-btn{background:var(--gold)!important;color:var(--deep)!important;font-weight:700!important;border-radius:50px!important;padding:8px 22px!important;}
+  .page-hero{background:linear-gradient(135deg,#1a1008,#3a2010 60%,#6b4226);padding:48px 24px 56px;text-align:center;}
+  .page-hero h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,3.2rem);color:#fdfaf5;font-weight:900;margin-bottom:10px;}
+  .page-hero p{color:rgba(245,237,224,0.7);font-size:1rem;}
+  .page-wrap{max-width:1100px;margin:0 auto;padding:48px 20px 80px;}
+  .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;}
+  .card-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin-bottom:14px;color:var(--earth);}
+  input,select{font-family:var(--font-body);font-size:0.93rem;border:1.5px solid #e0d0bc;border-radius:10px;padding:10px 14px;outline:none;width:100%;background:var(--white);color:var(--deep);transition:border-color 0.2s;}
+  input:focus,select:focus{border-color:var(--clay);}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--clay);color:#fff;padding:10px 22px;border-radius:50px;border:none;font-family:var(--font-body);font-size:0.93rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s;}
+  .btn:hover{background:var(--earth);transform:translateY(-2px);}
+  .btn-sky{background:var(--sky);}.btn-sky:hover{background:#2a5c85;}
+  .row{display:flex;gap:16px;flex-wrap:wrap;}.row>*{flex:1 1 180px;}
+  label{font-size:0.82rem;font-weight:600;color:#7a5a3a;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}
+  .stat-card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;border-top:4px solid var(--clay);}
+  .stat-label{font-size:0.78rem;font-weight:700;text-transform:uppercase;color:#a08060;}
+  .stat-value{font-family:var(--font-head);font-size:2rem;font-weight:900;color:var(--earth);}
+  .stat-sub{font-size:0.8rem;color:#a08060;margin-top:2px;}
+  .tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap;}
+  .tab-btn{background:#e8d8c8;color:var(--earth);border:none;padding:8px 20px;border-radius:50px;font-family:var(--font-body);font-size:0.88rem;font-weight:600;cursor:pointer;transition:background 0.2s;}
+  .tab-btn.active{background:var(--clay);color:#fff;}
+  .tab-content{display:none;}.tab-content.active{display:block;}
+  .expense-list{max-height:340px;overflow-y:auto;}
+  .expense-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0e4d4;}
+  .expense-avatar{width:38px;height:38px;border-radius:50%;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+  .expense-info{flex:1;}.expense-name{font-weight:600;font-size:0.93rem;}.expense-meta{font-size:0.78rem;color:#a08060;}
+  .expense-amount{font-weight:700;font-size:1.05rem;color:var(--earth);}
+  .expense-del{background:none;border:none;cursor:pointer;color:#c0392b;font-size:1rem;padding:4px;}
+  .member-chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+  .member-chip{display:flex;align-items:center;gap:6px;background:#fce8dc;color:var(--earth);border-radius:50px;padding:5px 12px 5px 6px;font-size:0.82rem;font-weight:600;}
+  .member-chip button{background:none;border:none;cursor:pointer;color:#c0392b;font-size:0.85rem;padding:0;width:auto;}
+  .progress-bar-wrap{background:#e8d8c8;border-radius:50px;height:8px;margin:8px 0;overflow:hidden;}
+  .progress-bar{height:100%;border-radius:50px;background:var(--clay);transition:width 0.5s;}
+  .split-result{border-radius:12px;padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+  .split-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.82rem;flex-shrink:0;color:#fff;}
+  .split-name{font-weight:600;font-size:0.93rem;}.split-amount{margin-left:auto;font-weight:700;font-size:1rem;}
+  .split-owes{color:#c0392b;}.split-gets{color:var(--leaf);}
+  .settlement-item{background:#fff8ee;border:1px solid #f0e4d4;border-radius:10px;padding:12px 16px;margin-bottom:8px;font-size:0.88rem;display:flex;align-items:center;gap:8px;}
+  .empty-state{text-align:center;padding:40px 20px;color:#a08060;}.empty-state .es-icon{font-size:3rem;margin-bottom:12px;}
+  footer{background:var(--deep);color:rgba(245,237,224,0.6);text-align:center;padding:28px 20px;font-size:0.82rem;}
+  footer strong{color:var(--gold);}
+  @media(max-width:768px){nav{padding:0 18px;}.nav-links{display:none;}.page-wrap{padding:28px 16px 60px;}.row{flex-direction:column;}}
+
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-menu{display:none;position:absolute;top:54px;right:0;background:rgba(26,16,8,0.98);border-radius:12px;padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:2000;border:1px solid rgba(255,255,255,0.1);}
+  .nav-dropdown-menu.open{display:block;animation:fadeDown 0.2s ease both;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+  .nav-dropdown-menu a{display:flex;align-items:center;gap:8px;color:var(--sand);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:0.88rem;transition:background 0.2s;}
+  .nav-dropdown-menu a:hover{background:var(--clay);}
+  .nav-dropdown-menu .logout{color:#ff8080;}
+  .nav-dropdown-menu .logout:hover{background:#c0392b;color:#fff;}
+  .nav-dropdown-menu hr{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:4px 0;}
+
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><img src="/images/way-wiselogo.png" alt="Waywise"> <span></span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/budget" class="active">Budget</a>
+    <a href="/itinerary">Itinerary</a>
+    <a href="/weather">Weather</a>
+    <a href="/hotels">Hotels</a>
+    <% if (isLoggedIn) { %>
+      <div class="nav-dropdown" id="nav-dropdown">
+        <div class="nav-user" onclick="toggleDropdown()" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);transition:background 0.2s;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">
+            <%= currentUser.charAt(0).toUpperCase() %>
+          </div>
+          <span style="color:var(--sand);font-size:0.88rem;font-weight:600;"><%= currentUser.split(" ")[0] %></span>
+          <span style="color:var(--sand);font-size:0.7rem;opacity:0.7;">&#9660;</span>
+        </div>
+        <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+          <a href="/auth/profile">&#128100; My Profile</a>
+          <% if (currentRole === "admin") { %>
+            <a href="/admin">&#9881;&#65039; Admin Panel</a>
+          <% } %>
+          <hr/>
+          <a href="/auth/logout" class="logout">&#128682; Logout</a>
+        </div>
+      </div>
+    <% } else { %>
+      <a href="/auth/login" class="nav-btn">Login / Signup</a>
+    <% } %>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>💰 Budget Manager</h1>
+  <p>Track group expenses and auto-calculate who owes what</p>
+</div>
+
+<div class="page-wrap">
+  <% if (!isLoggedIn) { %>
+    <div class="card" style="border:2px dashed #c9794a;background:rgba(255,255,255,0.95);margin-bottom:24px;">
+      <div class="card-title">🔐 Login Required</div>
+      <p style="color:#7a5a3a;font-size:0.95rem;line-height:1.7;">Please log in to save and manage your budget plans. Your expense history and latest trip budget will appear on your profile once you start using the planner.</p>
+      <a href="/auth/login" class="btn btn-green">Login / Signup</a>
+    </div>
+  <% } %>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-bottom:28px;">
+    <div class="stat-card"><div class="stat-label">Total Spent</div><div class="stat-value" id="stat-total">₹0</div><div class="stat-sub">across all expenses</div></div>
+    <div class="stat-card" style="border-top-color:var(--sky);"><div class="stat-label">Per Person</div><div class="stat-value" id="stat-per-person">₹0</div><div class="stat-sub">equal share</div></div>
+    <div class="stat-card" style="border-top-color:var(--leaf);"><div class="stat-label">Members</div><div class="stat-value" id="stat-members">0</div><div class="stat-sub">in the group</div></div>
+    <div class="stat-card" style="border-top-color:var(--gold);"><div class="stat-label">Expenses</div><div class="stat-value" id="stat-expenses">0</div><div class="stat-sub">logged items</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('members')">👥 Members</button>
+    <button class="tab-btn" onclick="switchTab('add-expense')">➕ Add Expense</button>
+    <button class="tab-btn" onclick="switchTab('expenses')">📋 Expenses</button>
+    <button class="tab-btn" onclick="switchTab('splits')">⚖️ Splits</button>
+  </div>
+
+  <div id="tab-members" class="tab-content active">
+    <div class="card">
+      <div class="card-title">👥 Group Members</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <input id="member-input" type="text" placeholder="Member name…" style="flex:1;" onkeydown="if(event.key==='Enter')addMember()"/>
+        <button class="btn" onclick="addMember()">Add</button>
+      </div>
+      <div class="member-chips" id="member-chips"><div style="color:#a08060;font-size:0.88rem;">No members yet.</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🎯 Trip Budget Goal</div>
+      <div class="row">
+        <div><label>Budget Name</label><input id="budget-name" type="text" placeholder="e.g. Goa Trip Budget"/></div>
+        <div><label>Total Budget</label><input id="trip-budget" type="number" placeholder="e.g. 50000" oninput="updateBudgetBar()"/></div>
+        <div><label>Currency</label><select id="currency-symbol" onchange="updateStats()"><option>₹</option><option>$</option><option>€</option><option>£</option></select></div>
+      </div>
+      <div style="margin-top:14px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.82rem;color:#a08060;margin-bottom:4px;"><span>Spent</span><span id="budget-bar-label">₹0 / ₹0</span></div>
+        <div class="progress-bar-wrap"><div class="progress-bar" id="budget-progress" style="width:0%;"></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🧳 Budget-Friendly Trip Planner</div>
+      <div class="row">
+        <div><label>Destination</label><input id="budget-destination" type="text" placeholder="e.g. Nainital"/></div>
+        <div><label>Travelers</label><input id="budget-travellers" type="number" min="1" value="2"/></div>
+        <div><label>Total Budget (₹)</label><input id="budget-amount" type="number" placeholder="e.g. 10000"/></div>
+      </div>
+      <div class="row" style="margin-top:14px;">
+        <div><label>Start Date</label><input id="budget-start" type="date"/></div>
+        <div><label>End Date</label><input id="budget-end" type="date"/></div>
+        <div><label>&nbsp;</label><button class="btn btn-sky" style="width:100%;" onclick="generateBudgetPlan()">Generate Budget Plan</button></div>
+      </div>
+      <p style="margin-top:14px;font-size:0.9rem;color:#7a5a3a;line-height:1.5;">Enter your total budget and the planner will create a detailed itinerary with cost breakdowns for transport, accommodation, food, and activities. It will suggest affordable options like trains/buses over flights when possible, and alert if the budget is too low.</p>
+      <div id="budget-trip-result" style="display:none;margin-top:18px;"></div>
+    </div>
+  </div>
+
+  <div id="tab-add-expense" class="tab-content">
+    <div class="card">
+      <div class="card-title">➕ Log an Expense</div>
+      <div class="row">
+        <div><label>Description</label><input id="exp-desc" type="text" placeholder="e.g. Dinner"/></div>
+        <div><label>Amount</label><input id="exp-amount" type="number" placeholder="0.00"/></div>
+      </div>
+      <div class="row" style="margin-top:12px;">
+        <div><label>Paid By</label><select id="exp-paid-by"><option value="">-- Select member --</option></select></div>
+        <div><label>Category</label><select id="exp-category"><option>🍽️ Food</option><option>🏨 Accommodation</option><option>✈️ Transport</option><option>🎭 Entertainment</option><option>🛍️ Shopping</option><option>💊 Medical</option><option>📦 Other</option></select></div>
+        <div><label>Date</label><input id="exp-date" type="date"/></div>
+      </div>
+      <div style="margin-top:16px;">
+        <label>Split Among</label>
+        <div id="split-checkboxes" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;background:var(--white);border:1.5px solid #e0d0bc;border-radius:10px;padding:12px 14px;"><span style="color:#a08060;font-size:0.85rem;">Add members first</span></div>
+      </div>
+      <button class="btn" style="margin-top:18px;" onclick="addExpense()">💾 Save Expense</button>
+    </div>
+  </div>
+
+  <div id="tab-expenses" class="tab-content">
+    <div class="card"><div class="card-title">📋 All Expenses</div><div class="expense-list" id="expense-list"><div class="empty-state"><div class="es-icon">🧾</div>No expenses yet.</div></div></div>
+    <div class="card"><div class="card-title">📊 Spending by Category</div><div id="category-chart"></div></div>
+  </div>
+
+  <div id="tab-splits" class="tab-content">
+    <div class="card"><div class="card-title">⚖️ Balance Summary</div><div id="balance-summary"><div class="empty-state"><div class="es-icon">⚖️</div>Add members and expenses</div></div></div>
+    <div class="card"><div class="card-title">💳 Settlement Plan</div><p style="font-size:0.85rem;color:#a08060;margin-bottom:14px;">Minimum transactions to settle all debts</p><div id="settlement-plan"><div class="empty-state"><div class="es-icon">🤝</div>No settlements needed yet</div></div></div>
+  </div>
+</div>
+
+<footer>Made with ❤️ by <strong>Waywise</strong></footer>
+
+<script>
+const IS_LOGGED_IN = <%= JSON.stringify(isLoggedIn) %>;
+const SAVED_BUDGET = <%- JSON.stringify(savedBudget || null) %>;
+let currentBudgetId = SAVED_BUDGET?._id || null;
+let members=[],expenses=[],currency='₹';
+const COLORS=['#c9794a','#3a7ca5','#4a7c59','#e8a838','#7c3a7a','#c05a5a'];
+function avatarColor(n){let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))%COLORS.length;return COLORS[h];}
+function initials(n){return n.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function ensureBudgetLogin(){if(!IS_LOGGED_IN){alert('Please log in to use the Budget Manager.');window.location.href='/auth/login';return false;}return true;}
+function addMember(){if(!ensureBudgetLogin())return;const inp=document.getElementById('member-input');const name=inp.value.trim();if(!name||members.includes(name))return;members.push(name);inp.value='';renderMembers();renderSplitCheckboxes();renderPaidBySelect();updateStats();saveBudget();}
+function removeMember(n){if(!ensureBudgetLogin())return;members=members.filter(m=>m!==n);renderMembers();renderSplitCheckboxes();renderPaidBySelect();updateStats();updateSplits();saveBudget();}
+function renderMembers(){const el=document.getElementById('member-chips');if(!members.length){el.innerHTML='<div style="color:#a08060;font-size:0.88rem;">No members yet.</div>';return;}el.innerHTML=members.map(m=>`<div class="member-chip"><div style="width:22px;height:22px;border-radius:50%;background:${avatarColor(m)};display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:0.68rem;font-weight:700;">${initials(m)}</div>${m}<button onclick="removeMember('${m}')">✕</button></div>`).join('');}
+function renderPaidBySelect(){const s=document.getElementById('exp-paid-by');s.innerHTML='<option value="">-- Select member --</option>'+members.map(m=>`<option>${m}</option>`).join('');}
+function renderSplitCheckboxes(){const el=document.getElementById('split-checkboxes');if(!members.length){el.innerHTML='<span style="color:#a08060;font-size:0.85rem;">Add members first</span>';return;}el.innerHTML=members.map(m=>`<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.88rem;font-weight:500;"><input type="checkbox" id="split-${m}" checked style="width:auto;"/><div style="width:22px;height:22px;border-radius:50%;background:${avatarColor(m)};display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:0.68rem;font-weight:700;">${initials(m)}</div>${m}</label>`).join('');}
+function getCurrencySymbol(){return document.getElementById('currency-symbol')?.value||'₹';}
+function addExpense(){if(!ensureBudgetLogin())return;const desc=document.getElementById('exp-desc').value.trim(),amount=parseFloat(document.getElementById('exp-amount').value),paidBy=document.getElementById('exp-paid-by').value,category=document.getElementById('exp-category').value,date=document.getElementById('exp-date').value,splitAmong=members.filter(m=>document.getElementById('split-'+m)?.checked);if(!desc||isNaN(amount)||amount<=0||!paidBy||!splitAmong.length){alert('Please fill all fields.');return;}expenses.push({id:Date.now(),desc,amount,paidBy,category,date,splitAmong});document.getElementById('exp-desc').value='';document.getElementById('exp-amount').value='';updateStats();renderExpenses();updateSplits();updateBudgetBar();switchTab('expenses');saveBudget();}
+function deleteExpense(id){if(!ensureBudgetLogin())return;expenses=expenses.filter(e=>e.id!==id);updateStats();renderExpenses();updateSplits();updateBudgetBar();saveBudget();}
+function updateStats(){currency=getCurrencySymbol();const total=expenses.reduce((s,e)=>s+e.amount,0);document.getElementById('stat-total').textContent=currency+total.toLocaleString('en-IN',{maximumFractionDigits:2});document.getElementById('stat-per-person').textContent=members.length?currency+(total/members.length).toLocaleString('en-IN',{maximumFractionDigits:2}):currency+'0';document.getElementById('stat-members').textContent=members.length;document.getElementById('stat-expenses').textContent=expenses.length;}
+function updateBudgetBar(){const budget=parseFloat(document.getElementById('trip-budget').value)||0,spent=expenses.reduce((s,e)=>s+e.amount,0),pct=budget?Math.min(spent/budget*100,100):0;document.getElementById('budget-progress').style.width=pct+'%';document.getElementById('budget-progress').style.background=pct>90?'#c0392b':pct>70?'#e8a838':'var(--clay)';const sym=getCurrencySymbol();document.getElementById('budget-bar-label').textContent=`${sym}${spent.toLocaleString('en-IN',{maximumFractionDigits:2})} / ${sym}${budget?budget.toLocaleString('en-IN'):'0'}`;saveBudget();}
+function renderExpenses(){const el=document.getElementById('expense-list');if(!expenses.length){el.innerHTML='<div class="empty-state"><div class="es-icon">🧾</div>No expenses yet</div>';renderCategoryChart();return;}el.innerHTML=expenses.slice().reverse().map(e=>`<div class="expense-item"><div class="expense-avatar" style="background:${avatarColor(e.paidBy)}">${initials(e.paidBy)}</div><div class="expense-info"><div class="expense-name">${e.category} ${e.desc}</div><div class="expense-meta">Paid by <strong>${e.paidBy}</strong> · ${e.splitAmong.join(', ')}</div></div><div class="expense-amount">${getCurrencySymbol()}${e.amount.toLocaleString('en-IN',{maximumFractionDigits:2})}</div><button class="expense-del" onclick="deleteExpense(${e.id})">✕</button></div>`).join('');renderCategoryChart();}
+function renderCategoryChart(){const el=document.getElementById('category-chart');if(!expenses.length){el.innerHTML='<div style="color:#a08060;text-align:center;padding:20px;font-size:0.88rem;">No data yet</div>';return;}const cats={};expenses.forEach(e=>{cats[e.category]=(cats[e.category]||0)+e.amount;});const total=Object.values(cats).reduce((a,b)=>a+b,0);el.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,amt],i)=>`<div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;font-size:0.83rem;margin-bottom:4px;"><span style="font-weight:600;">${cat}</span><span>${getCurrencySymbol()}${amt.toLocaleString('en-IN',{maximumFractionDigits:2})} (${Math.round(amt/total*100)}%)</span></div><div style="background:#e8d8c8;border-radius:50px;height:8px;overflow:hidden;"><div style="width:${amt/total*100}%;height:100%;border-radius:50px;background:var(--clay);"></div></div></div>`).join('');}
+function calculateBalances(){const b={};members.forEach(m=>b[m]=0);expenses.forEach(e=>{const share=e.amount/e.splitAmong.length;b[e.paidBy]=(b[e.paidBy]||0)+e.amount;e.splitAmong.forEach(m=>{b[m]=(b[m]||0)-share;});});return b;}
+function updateSplits(){const bal=calculateBalances(),sym=getCurrencySymbol(),bsEl=document.getElementById('balance-summary');if(!members.length){bsEl.innerHTML='<div class="empty-state"><div class="es-icon">⚖️</div>Add members and expenses</div>';}else{bsEl.innerHTML=members.map(m=>{const b=bal[m]||0,isPos=b>=0;return`<div class="split-result" style="background:${isPos?'linear-gradient(135deg,#d9f0e1,#c4e8d0)':'linear-gradient(135deg,#fde8e8,#f8d0d0)'}"><div class="split-avatar" style="background:${avatarColor(m)}">${initials(m)}</div><div><div class="split-name">${m}</div><div style="font-size:0.78rem;color:#7a5a3a;">${isPos?'should receive':'owes the group'}</div></div><div class="split-amount ${isPos?'split-gets':'split-owes'}">${isPos?'+':''}${sym}${Math.abs(b).toFixed(2)}</div></div>`;}).join('');}
+const spEl=document.getElementById('settlement-plan'),settlements=computeSettlements(calculateBalances());if(!settlements.length){spEl.innerHTML='<div class="empty-state"><div class="es-icon">🤝</div>All settled up!</div>';return;}spEl.innerHTML=settlements.map(s=>`<div class="settlement-item"><div style="width:30px;height:30px;border-radius:50%;background:${avatarColor(s.from)};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;">${initials(s.from)}</div><div style="flex:1;"><strong>${s.from}</strong> pays <strong>${s.to}</strong></div><div style="font-weight:700;color:var(--earth);">${sym}${s.amount.toFixed(2)}</div></div>`).join('');}
+function computeSettlements(balances){const cr=[],db=[];Object.entries(balances).forEach(([n,b])=>{if(b>0.01)cr.push({name:n,amount:b});else if(b<-0.01)db.push({name:n,amount:-b});});cr.sort((a,b)=>b.amount-a.amount);db.sort((a,b)=>b.amount-a.amount);const s=[];let ci=0,di=0;while(ci<cr.length&&di<db.length){const c=cr[ci],d=db[di],amt=Math.min(c.amount,d.amount);s.push({from:d.name,to:c.name,amount:amt});c.amount-=amt;d.amount-=amt;if(c.amount<0.01)ci++;if(d.amount<0.01)di++;}return s;}
+function switchTab(tab){document.querySelectorAll('.tab-btn').forEach((b,i)=>{const tabs=['members','add-expense','expenses','splits'];b.classList.toggle('active',tabs[i]===tab);});document.querySelectorAll('.tab-content').forEach(tc=>tc.classList.remove('active'));document.getElementById('tab-'+tab).classList.add('active');if(tab==='splits')updateSplits();if(tab==='expenses')renderExpenses();}
+document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+if (IS_LOGGED_IN) {
+  if (SAVED_BUDGET) {
+    initBudget(SAVED_BUDGET);
+  } else {
+    loadBudget();
+  }
+}
+
+function initBudget(budget){
+  currentBudgetId = budget._id;
+  members = Array.isArray(budget.members) ? budget.members : [];
+  expenses = Array.isArray(budget.expenses) ? budget.expenses : [];
+  currency = budget.currency || '₹';
+  document.getElementById('trip-budget').value = budget.totalBudget || '';
+  document.getElementById('currency-symbol').value = currency;
+  document.getElementById('budget-name').value = budget.tripName || 'My Trip';
+  renderMembers();
+  renderSplitCheckboxes();
+  renderPaidBySelect();
+  updateStats();
+  updateBudgetBar();
+  renderExpenses();
+  updateSplits();
+}
+
+async function saveBudget(){
+  if (!IS_LOGGED_IN) return;
+  try {
+    const response = await fetch('/api/budget/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        budgetId: currentBudgetId,
+        tripName: document.getElementById('budget-name').value.trim() || 'My Trip',
+        members,
+        expenses,
+        totalBudget: parseFloat(document.getElementById('trip-budget').value) || 0,
+        currency: getCurrencySymbol()
+      })
+    });
+    const result = await response.json();
+    if (result.success) {
+      currentBudgetId = result.budgetId;
+    }
+  } catch (err) {
+    console.warn('Could not save budget:', err);
+  }
+}
+
+async function loadBudget(){
+  try {
+    const res = await fetch('/api/budget/my');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (!data.length) return;
+    const last = data[0];
+    currentBudgetId = last._id;
+    members = Array.isArray(last.members) ? last.members : [];
+    expenses = Array.isArray(last.expenses) ? last.expenses : [];
+    currency = last.currency || '₹';
+    document.getElementById('budget-name').value = last.tripName || 'My Trip';
+    document.getElementById('trip-budget').value = last.totalBudget || '';
+    document.getElementById('currency-symbol').value = currency;
+    renderMembers();
+    renderSplitCheckboxes();
+    renderPaidBySelect();
+    updateStats();
+    updateBudgetBar();
+    renderExpenses();
+    updateSplits();
+  } catch (err) {
+    console.warn('Could not load budget:', err);
+  }
+}
+
+function renderBudgetPlan(text) {
+  const container = document.getElementById('budget-trip-result');
+  let content = text.trim();
+  try {
+    const json = JSON.parse(content);
+    if (json.error) {
+      container.innerHTML = `<div class="card" style="background:#fde8e8;border:1px solid #f5c2c2;color:#8a1f1f;"><strong>Oops:</strong> ${json.error}</div>`;
+      return;
+    }
+    const daysHtml = Array.isArray(json.days) ? json.days.map(day => {
+      return `<div style="margin-bottom:16px;"><strong>Day ${day.dayNumber} - ${day.date}</strong><div style="margin-top:8px;">${day.title || ''}</div>${Array.isArray(day.activities) ? day.activities.map(a => `<div style="margin:10px 0 0;padding:12px;border-radius:12px;background:#fff7eb;"><strong>${a.time || ''} ${a.title || ''}</strong><div style="font-size:0.92rem;color:#7a5a3a;margin-top:6px;">${a.description || ''}</div><div style="font-size:0.85rem;color:#a08060;margin-top:4px;">Tip: ${a.tip || 'No tip available.'}</div></div>`).join('') : ''}</div>`;
+    }).join('') : '';
+    container.innerHTML = `<div class="card" style="padding:22px;">
+      <div style="font-size:1.06rem;font-weight:700;margin-bottom:10px;">${json.tripTitle || 'Budget Travel Plan for '+json.destination}</div>
+      <div style="color:#7a5a3a;margin-bottom:12px;">${json.overview || ''}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:18px;">
+        <div style="background:#fdf3e7;border:1px solid #f7d6a0;border-radius:12px;padding:12px;"><strong>Destination</strong><div style="margin-top:6px;color:#7a5a3a;">${json.destination || 'TBD'}</div></div>
+        <div style="background:#f3f7ff;border:1px solid #c5d8ff;border-radius:12px;padding:12px;"><strong>Estimated Budget</strong><div style="margin-top:6px;color:#7a5a3a;">${json.estimatedBudget || 'Around your budget'}</div></div>
+        <div style="background:#eef9ee;border:1px solid #c7e7c3;border-radius:12px;padding:12px;"><strong>Best Time</strong><div style="margin-top:6px;color:#7a5a3a;">${json.bestTimeToVisit || 'Anytime'}</div></div>
+      </div>
+      ${json.budgetBreakdown ? `<div style="margin-bottom:18px;"><strong>Budget Breakdown</strong><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px;">${Object.entries(json.budgetBreakdown).map(([cat, cost]) => `<div style="background:#fff7eb;border:1px solid #f0d68b;border-radius:8px;padding:10px;text-align:center;"><strong>${cat.charAt(0).toUpperCase() + cat.slice(1)}</strong><div style="margin-top:4px;color:#7a5a3a;">${cost}</div></div>`).join('')}</div></div>` : ''}
+      ${daysHtml}
+      ${Array.isArray(json.importantNotes) ? `<div style="margin-top:12px;"><strong>Important Notes</strong><ul style="margin-top:8px;color:#7a5a3a;">${json.importantNotes.map(note=>`<li>${note}</li>`).join('')}</ul></div>` : ''}
+    </div>`;
+  } catch (e) {
+    container.innerHTML = `<div class="card" style="background:#fff7d9;border:1px solid #f0d68b;color:#7a5a3a;"><strong>Plan generated:</strong><pre style="white-space:pre-wrap;word-break:break-word;margin-top:10px;">${content}</pre></div>`;
+  }
+}
+
+async function generateBudgetPlan() {
+  if (!ensureBudgetLogin()) return;
+  const destination = document.getElementById('budget-destination').value.trim();
+  const startDate = document.getElementById('budget-start').value;
+  const endDate = document.getElementById('budget-end').value;
+  const travellers = parseInt(document.getElementById('budget-travellers').value, 10) || 1;
+  const budgetAmount = parseFloat(document.getElementById('budget-amount').value) || 0;
+  const resultContainer = document.getElementById('budget-trip-result');
+  resultContainer.style.display = 'block';
+  if (!destination || !startDate || !endDate || !budgetAmount) {
+    resultContainer.innerHTML = `<div class="card" style="background:#fde8e8;border:1px solid #f5c2c2;color:#8a1f1f;">Please enter destination, dates and a valid budget first.</div>`;
+    return;
+  }
+  if (new Date(endDate) < new Date(startDate)) {
+    resultContainer.innerHTML = `<div class="card" style="background:#fde8e8;border:1px solid #f5c2c2;color:#8a1f1f;">End date must be after start date.</div>`;
+    return;
+  }
+  resultContainer.innerHTML = `<div class="card" style="background:#f5f8ff;border:1px solid #c5d8ff;color:#375a8f;">Generating a budget-friendly plan for ${destination}… please wait.</div>`;
+  try {
+    const response = await fetch('/api/generate-itinerary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        destination,
+        startDate,
+        endDate,
+        travellers,
+        budgetAmount,
+        notes: 'Provide detailed cost breakdowns for each category (transport, accommodation, food, activities) with specific price ranges in INR. Divide the total budget realistically across these categories.'
+      })
+    });
+    const data = await response.json();
+    if (!response.ok || data.error) {
+      resultContainer.innerHTML = `<div class="card" style="background:#fde8e8;border:1px solid #f5c2c2;color:#8a1f1f;"><strong>Error:</strong> ${data.error || 'Unable to generate a budget plan right now.'}</div>`;
+      return;
+    }
+    const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    renderBudgetPlan(rawText);
+  } catch (err) {
+    resultContainer.innerHTML = `<div class="card" style="background:#fde8e8;border:1px solid #f5c2c2;color:#8a1f1f;"><strong>Error:</strong> ${err.message || 'Something went wrong while generating your plan.'}</div>`;
+  }
+}
+
+// ── PROFILE DROPDOWN ──
+function toggleDropdown() {
+  const menu = document.getElementById('nav-dropdown-menu');
+  if (menu) menu.classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('nav-dropdown');
+  const menu = document.getElementById('nav-dropdown-menu');
+  if (menu && dropdown && !dropdown.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+</script>
+</body>
+</html>

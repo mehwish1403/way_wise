@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--sand:#f5ede0;--clay:#c9794a;--earth:#6b4226;--deep:#1a1008;--sky:#3a7ca5;--leaf:#4a7c59;--gold:#e8a838;--white:#fdfaf5;--card-bg:rgba(255,255,255,0.92);--shadow:0 8px 32px rgba(26,16,8,0.13);--radius:18px;--font-head:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--sand);color:var(--deep);min-height:100vh;}
+  nav{position:sticky;top:0;z-index:1000;background:rgba(26,16,8,0.96);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:68px;box-shadow:0 2px 24px rgba(0,0,0,0.25);}
+  .nav-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:900;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:8px;}
+  .nav-logo img{height:120px;width:auto;display:block;}
+  .nav-logo span{color:var(--sand);font-weight:400;font-size:1.1rem;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:var(--sand);font-size:0.92rem;font-weight:500;text-decoration:none;padding:7px 16px;border-radius:50px;transition:background 0.2s;}
+  .nav-links a:hover,.nav-links a.active{background:var(--clay);color:#fff;}
+  .nav-btn{background:var(--gold)!important;color:var(--deep)!important;font-weight:700!important;border-radius:50px!important;padding:8px 22px!important;}
+  .page-hero{background:linear-gradient(135deg,#1a1008,#3a2010 60%,#6b4226);padding:48px 24px 56px;text-align:center;}
+  .page-hero h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,3.2rem);color:#fdfaf5;font-weight:900;margin-bottom:10px;}
+  .page-hero p{color:rgba(245,237,224,0.7);font-size:1rem;}
+  .page-wrap{max-width:1100px;margin:0 auto;padding:48px 20px 80px;}
+  .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;}
+  .card-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin-bottom:14px;color:var(--earth);}
+  input,select{font-family:var(--font-body);font-size:0.93rem;border:1.5px solid #e0d0bc;border-radius:10px;padding:10px 14px;outline:none;width:100%;background:var(--white);color:var(--deep);transition:border-color 0.2s;}
+  input:focus,select:focus{border-color:var(--clay);}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--clay);color:#fff;padding:10px 22px;border-radius:50px;border:none;font-family:var(--font-body);font-size:0.93rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s;}
+  .btn:hover{background:var(--earth);transform:translateY(-2px);}
+  .btn-secondary{background:var(--sky);}.btn-secondary:hover{background:#2a5c85;}
+  .btn-green{background:var(--leaf);}.btn-green:hover{background:#3a6045;}
+  .row{display:flex;gap:16px;flex-wrap:wrap;}.row>*{flex:1 1 180px;}
+  label{font-size:0.82rem;font-weight:600;color:#7a5a3a;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;}
+  @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+  @keyframes loadbar{0%{width:0%;margin-left:0;}50%{width:60%;margin-left:20%;}100%{width:0%;margin-left:100%;}}
+  .day-card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:28px;overflow:hidden;}
+  .day-header{background:linear-gradient(135deg,var(--earth),var(--clay));color:#fff;padding:18px 24px;display:flex;align-items:center;gap:14px;}
+  .day-num{background:rgba(255,255,255,0.2);border-radius:12px;padding:6px 14px;font-weight:900;font-size:0.85rem;}
+  .day-date-title{font-family:var(--font-head);font-size:1.1rem;font-weight:700;}
+  .day-subtitle{font-size:0.82rem;opacity:0.8;margin-top:2px;}
+  .day-body{padding:20px 24px;}
+  .timeline-item{display:flex;gap:16px;margin-bottom:18px;position:relative;}
+  .timeline-item:not(:last-child)::after{content:'';position:absolute;left:19px;top:38px;bottom:-18px;width:2px;background:linear-gradient(to bottom,var(--clay),transparent);}
+  .timeline-icon{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:#fce8dc;z-index:1;}
+  .timeline-content{flex:1;padding-top:4px;}
+  .timeline-time{font-size:0.75rem;font-weight:700;color:var(--sky);text-transform:uppercase;margin-bottom:2px;}
+  .timeline-title{font-weight:700;font-size:0.97rem;margin-bottom:3px;}
+  .timeline-desc{font-size:0.84rem;color:#7a5a3a;line-height:1.55;}
+  .timeline-tip{display:inline-flex;align-items:center;gap:5px;background:#fef3d0;color:#7a5a00;border-radius:8px;padding:4px 10px;font-size:0.76rem;font-weight:600;margin-top:6px;}
+  .trip-summary-card{background:linear-gradient(135deg,var(--deep),#3a2010);color:#fff;border-radius:var(--radius);padding:28px;margin-bottom:28px;}
+  .trip-summary-title{font-family:var(--font-head);font-size:1.8rem;font-weight:900;margin-bottom:6px;}
+  .trip-summary-sub{color:rgba(245,237,224,0.7);font-size:0.9rem;margin-bottom:18px;}
+  .trip-highlights{display:flex;gap:12px;flex-wrap:wrap;}
+  .trip-highlight{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:10px 16px;font-size:0.83rem;}
+  .trip-highlight strong{display:block;font-size:1rem;color:var(--gold);}
+  footer{background:var(--deep);color:rgba(245,237,224,0.6);text-align:center;padding:28px 20px;font-size:0.82rem;}
+  footer strong{color:var(--gold);}
+  @media(max-width:768px){nav{padding:0 18px;}.nav-links{display:none;}.row{flex-direction:column;}.page-wrap{padding:28px 16px 60px;}}
+
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-menu{display:none;position:absolute;top:54px;right:0;background:rgba(26,16,8,0.98);border-radius:12px;padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:2000;border:1px solid rgba(255,255,255,0.1);}
+  .nav-dropdown-menu.open{display:block;animation:fadeDown 0.2s ease both;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+  .nav-dropdown-menu a{display:flex;align-items:center;gap:8px;color:var(--sand);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:0.88rem;transition:background 0.2s;}
+  .nav-dropdown-menu a:hover{background:var(--clay);}
+  .nav-dropdown-menu .logout{color:#ff8080;}
+  .nav-dropdown-menu .logout:hover{background:#c0392b;color:#fff;}
+  .nav-dropdown-menu hr{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:4px 0;}
+
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><img src="/images/way-wiselogo.png" alt="Waywise"> <span></span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/budget">Budget</a>
+    <a href="/itinerary" class="active">Itinerary</a>
+    <a href="/weather">Weather</a>
+    <a href="/hotels">Hotels</a>
+    <% if (isLoggedIn) { %>
+      <div class="nav-dropdown" id="nav-dropdown">
+        <div class="nav-user" onclick="toggleDropdown()" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);transition:background 0.2s;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">
+            <%= currentUser.charAt(0).toUpperCase() %>
+          </div>
+          <span style="color:var(--sand);font-size:0.88rem;font-weight:600;"><%= currentUser.split(" ")[0] %></span>
+          <span style="color:var(--sand);font-size:0.7rem;opacity:0.7;">&#9660;</span>
+        </div>
+        <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+          <a href="/auth/profile">&#128100; My Profile</a>
+          <% if (currentRole === "admin") { %>
+            <a href="/admin">&#9881;&#65039; Admin Panel</a>
+          <% } %>
+          <hr/>
+          <a href="/auth/logout" class="logout">&#128682; Logout</a>
+        </div>
+      </div>
+    <% } else { %>
+      <a href="/auth/login" class="nav-btn">Login / Signup</a>
+    <% } %>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1> AI Trip Planner</h1>
+  <p>Complete hour-by-hour itinerary for every day of your trip</p>
+</div>
+
+<div class="page-wrap">
+  <div class="card">
+    <div class="card-title">✈️ Tell Us About Your Trip</div>
+    <div class="row">
+      <div><label>Starting From</label><input id="trip-origin" type="text" placeholder="e.g. Mumbai, Delhi"/></div>
+      <div><label>Destination(s)</label><input id="trip-dest" type="text" placeholder="e.g. Goa, Paris, Tokyo"/></div>
+    </div>
+    <div class="row" style="margin-top:12px;">
+      <div><label>Start Date</label><input id="trip-start" type="date"/></div>
+      <div><label>End Date</label><input id="trip-end" type="date"/></div>
+      <div><label>Travellers</label><input id="trip-people" type="number" placeholder="e.g. 3" min="1" max="20"/></div>
+    </div>
+    <div class="row" style="margin-top:12px;">
+      <div><label>Budget Range</label><select id="trip-budget-type"><option value="budget">💰 Budget</option><option value="mid" selected>🏨 Mid-range</option><option value="luxury">✨ Luxury</option></select></div>
+      <div><label>Travel Style</label><select id="trip-style"><option value="sightseeing">🏛️ Sightseeing</option><option value="adventure">🏕️ Adventure</option><option value="food">🍜 Food & Local</option><option value="relaxation">🏖️ Relaxation</option><option value="mixed" selected>🎒 Mixed</option></select></div>
+    </div>
+    <div style="margin-top:12px;"><label>Special Requests</label><input id="trip-notes" type="text" placeholder="e.g. vegetarian only, avoid crowds…"/></div>
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" id="generate-btn" onclick="generateItinerary()" style="font-size:1rem;padding:13px 30px;"><%= isLoggedIn ? '✨ Generate AI Itinerary' : '🔐 Login to Generate' %></button>
+      <button class="btn btn-secondary" onclick="clearItinerary()" style="padding:13px 22px;">🗑️ Clear</button>
+      <button class="btn btn-green" onclick="window.print()" style="padding:13px 22px;">🖨️ Print</button>
+    </div>
+  </div>
+
+  <div id="itinerary-loading" style="display:none;">
+    <div class="card" style="text-align:center;padding:48px 24px;">
+      <div style="font-size:3rem;margin-bottom:16px;animation:spin 2s linear infinite;display:inline-block;">✈️</div>
+      <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--earth);margin-bottom:8px;">Crafting Your Perfect Trip…</div>
+      <div style="color:#a08060;font-size:0.92rem;" id="loading-msg">Gemini AI is planning your guide…</div>
+      <div style="margin-top:20px;background:#e8d8c8;border-radius:50px;height:6px;overflow:hidden;max-width:300px;margin:20px auto 0;">
+        <div style="height:100%;background:var(--clay);border-radius:50px;animation:loadbar 2.5s ease-in-out infinite;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="itinerary-result" style="display:none;"></div>
+</div>
+
+<footer>Made with ❤️ by <strong>Waywise</strong></footer>
+
+<script>
+const IS_LOGGED_IN = <%= JSON.stringify(isLoggedIn) %>;
+const SAVED_TRIP = <%- JSON.stringify(savedTrip || null) %>;
+// Using server-side AI proxy (Groq)
+const ACTIVITY_ICONS={transport:'🚗',cab:'🚕',taxi:'🚕',bus:'🚌',train:'🚆',flight:'✈️',metro:'🚇',auto:'🛺',hotel:'🏨',checkin:'🏨',breakfast:'☕',lunch:'🍽️',dinner:'🍷',food:'🍜',cafe:'☕',restaurant:'🍽️',temple:'🛕',museum:'🏛️',beach:'🏖️',market:'🛍️',park:'🌳',shopping:'🛍️',default:'📍'};
+function getActivityIcon(text){const t=text.toLowerCase();for(const[key,icon]of Object.entries(ACTIVITY_ICONS)){if(t.includes(key))return icon;}return ACTIVITY_ICONS.default;}
+
+async function generateItinerary(){
+  if (!IS_LOGGED_IN) {
+    window.location.href = '/auth/login';
+    return;
+  }
+  const origin=document.getElementById('trip-origin').value.trim(),dest=document.getElementById('trip-dest').value.trim(),start=document.getElementById('trip-start').value,end=document.getElementById('trip-end').value,people=document.getElementById('trip-people').value||'2',budgetType=document.getElementById('trip-budget-type').value,style=document.getElementById('trip-style').value,notes=document.getElementById('trip-notes').value.trim();
+  if(!dest||!start||!end){alert('Please fill in destination and travel dates!');return;}
+  const startDate=new Date(start),endDate=new Date(end);
+  if(startDate>endDate){alert('End date must be after start date.');return;}
+  const numDays=Math.round((endDate-startDate)/(1000*60*60*24))+1;
+  if(numDays>14){alert('Please plan up to 14 days at a time.');return;}
+  document.getElementById('itinerary-loading').style.display='block';
+  document.getElementById('itinerary-result').style.display='none';
+  document.getElementById('generate-btn').disabled=true;
+  document.getElementById('generate-btn').textContent='⏳ Generating…';
+  const msgs=['Gemini AI is planning your guide…','Finding best routes…','Discovering hidden gems…','Calculating timings…','Adding food spots & tips…'];
+  let mi=0;const mi_int=setInterval(()=>{mi=(mi+1)%msgs.length;const el=document.getElementById('loading-msg');if(el)el.textContent=msgs[mi];},2200);
+  const budgetLabels={budget:'budget/backpacker',mid:'mid-range',luxury:'luxury'};
+  const styleLabels={sightseeing:'sightseeing and culture',adventure:'adventure and nature',food:'food and local experiences',relaxation:'relaxation',mixed:'mixed sightseeing, food and culture'};
+  const dateList=[];for(let d=new Date(startDate);d<=endDate;d.setDate(d.getDate()+1))dateList.push(d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}));
+  const prompt=`You are an expert travel guide. Create a detailed hour-by-hour travel itinerary.\nTrip: From ${origin||'home'} to ${dest}, ${dateList.join(', ')}, ${numDays} day(s), ${people} travellers, ${budgetLabels[budgetType]} budget, ${styleLabels[style]} style.${notes?'\nSpecial: '+notes:''}\nReturn ONLY raw JSON:\n{"tripTitle":"string","destination":"string","overview":"string","totalDistance":"string","estimatedBudget":"string","bestTimeToVisit":"string","days":[{"dayNumber":1,"date":"string","title":"string","activities":[{"time":"string","title":"string","type":"transport|food|sightseeing|hotel|leisure","description":"string","tip":"string","duration":"string"}]}],"packingTips":["string"],"importantNotes":["string"]}`;
+  try{
+    const res=await fetch('/api/generate-itinerary',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+    clearInterval(mi_int);
+    if(!res.ok){const err=await res.json();throw new Error(err.error||'API error');}
+    const data=await res.json();
+    let raw=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+    raw=raw.replace(/```json\s*/gi,'').replace(/```\s*/gi,'').trim();
+    let itin;try{itin=JSON.parse(raw);}catch(e){const m=raw.match(/\{[\s\S]*\}/);if(m)itin=JSON.parse(m[0]);else throw new Error('Could not parse AI response.');}
+    renderItinerary(itin,startDate);
+    await saveTrip(itin, { origin, destination: dest, startDate: start, endDate: end, numDays, travellers: Number(people), budgetType, travelStyle: style });
+  }catch(err){
+    clearInterval(mi_int);
+    document.getElementById('itinerary-loading').style.display='none';
+    document.getElementById('itinerary-result').style.display='block';
+    document.getElementById('itinerary-result').innerHTML=`<div class="card" style="border-left:4px solid #c0392b;padding:24px;"><div style="font-weight:700;color:#c0392b;margin-bottom:6px;">❌ Failed to generate itinerary</div><div style="color:#7a5a3a;font-size:0.88rem;">${err.message}</div><button class="btn" style="margin-top:14px;" onclick="generateItinerary()">🔄 Try Again</button></div>`;
+  }finally{document.getElementById('generate-btn').disabled=false;document.getElementById('generate-btn').textContent='✨ Generate AI Itinerary';}
+}
+
+function renderItinerary(data,startDate){
+  document.getElementById('itinerary-loading').style.display='none';
+  const container=document.getElementById('itinerary-result');
+  container.style.display='block';
+  const tc={transport:'#daeeff',food:'#d9f0e1',sightseeing:'#fce8dc',hotel:'#f0e4ff',leisure:'#fef3d0',default:'#f5ede0'};
+  let html=`<div class="trip-summary-card"><div class="trip-summary-title">✈️ ${data.tripTitle||data.destination+' Trip'}</div><div class="trip-summary-sub">${data.overview||''}</div><div class="trip-highlights">${data.totalDistance?`<div class="trip-highlight"><strong>📍 ${data.totalDistance}</strong>Total Distance</div>`:''} ${data.estimatedBudget?`<div class="trip-highlight"><strong>💰 ${data.estimatedBudget}</strong>Est. Budget</div>`:''}<div class="trip-highlight"><strong>📅 ${data.days?.length||0} Days</strong>Planned</div></div></div>`;
+  (data.days||[]).forEach((day,i)=>{
+    const dd=new Date(startDate);dd.setDate(dd.getDate()+i);
+    const ds=dd.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'});
+    html+=`<div class="day-card"><div class="day-header"><div class="day-num">Day ${day.dayNumber||i+1}</div><div><div class="day-date-title">${day.title||'Day '+(i+1)}</div><div class="day-subtitle">${ds}</div></div></div><div class="day-body">`;
+    (day.activities||[]).forEach(act=>{const icon=getActivityIcon(act.title+' '+act.type),bg=tc[act.type]||tc.default;html+=`<div class="timeline-item"><div class="timeline-icon" style="background:${bg};">${icon}</div><div class="timeline-content"><div class="timeline-time">${act.time||''} ${act.duration?'· '+act.duration:''}</div><div class="timeline-title">${act.title}</div><div class="timeline-desc">${act.description||''}</div>${act.tip?`<div class="timeline-tip">💡 ${act.tip}</div>`:''}</div></div>`;});
+    html+=`</div></div>`;
+  });
+  if(data.packingTips?.length||data.importantNotes?.length){html+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;">`;if(data.packingTips?.length)html+=`<div class="card"><div class="card-title">🎒 Packing Tips</div><ul style="padding-left:18px;color:#7a5a3a;font-size:0.88rem;line-height:1.8;">${data.packingTips.map(t=>`<li>${t}</li>`).join('')}</ul></div>`;if(data.importantNotes?.length)html+=`<div class="card"><div class="card-title">📌 Important Notes</div><ul style="padding-left:18px;color:#7a5a3a;font-size:0.88rem;line-height:1.8;">${data.importantNotes.map(n=>`<li>${n}</li>`).join('')}</ul></div>`;html+=`</div>`;}
+  html+=`<div style="text-align:center;padding:20px 0;"><button class="btn" onclick="generateItinerary()" style="margin-right:10px;">🔄 Regenerate</button><button class="btn btn-green" onclick="window.print()">🖨️ Print PDF</button></div>`;
+  container.innerHTML=html;
+  container.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function clearItinerary(){document.getElementById('itinerary-result').style.display='none';document.getElementById('itinerary-result').innerHTML='';document.getElementById('itinerary-loading').style.display='none';['trip-origin','trip-dest','trip-start','trip-end','trip-people','trip-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});}
+
+(function initSavedTrip(){
+  if (!SAVED_TRIP) return;
+  const startDate = SAVED_TRIP.startDate ? new Date(SAVED_TRIP.startDate) : new Date(SAVED_TRIP.createdAt);
+  renderItinerary(SAVED_TRIP, startDate);
+  document.getElementById('generate-btn').textContent = 'View Saved Trip';
+  if (document.getElementById('trip-origin')) document.getElementById('trip-origin').value = SAVED_TRIP.origin || '';
+  if (document.getElementById('trip-dest')) document.getElementById('trip-dest').value = SAVED_TRIP.destination || '';
+  if (document.getElementById('trip-start')) document.getElementById('trip-start').value = SAVED_TRIP.startDate ? new Date(SAVED_TRIP.startDate).toISOString().split('T')[0] : '';
+  if (document.getElementById('trip-end')) document.getElementById('trip-end').value = SAVED_TRIP.endDate ? new Date(SAVED_TRIP.endDate).toISOString().split('T')[0] : '';
+  if (document.getElementById('trip-people')) document.getElementById('trip-people').value = SAVED_TRIP.travellers || '';
+  if (document.getElementById('trip-notes')) document.getElementById('trip-notes').value = SAVED_TRIP.importantNotes ? SAVED_TRIP.importantNotes.join(' | ') : '';
+})();
+
+async function saveTrip(itinerary, meta) {
+  if (!IS_LOGGED_IN) return;
+  try {
+    await fetch('/api/itinerary/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tripTitle: itinerary.tripTitle || `${meta.destination} Trip`,
+        origin: meta.origin || '',
+        destination: meta.destination,
+        startDate: meta.startDate,
+        endDate: meta.endDate,
+        numDays: meta.numDays,
+        travellers: meta.travellers,
+        budgetType: meta.budgetType,
+        travelStyle: meta.travelStyle,
+        estimatedBudget: itinerary.estimatedBudget || '',
+        overview: itinerary.overview || '',
+        days: itinerary.days || [],
+        packingTips: itinerary.packingTips || [],
+        importantNotes: itinerary.importantNotes || []
+      })
+    });
+  } catch (saveErr) {
+    console.warn('Could not save itinerary:', saveErr);
+  }
+}
+
+// ── PROFILE DROPDOWN ──
+function toggleDropdown() {
+  const menu = document.getElementById('nav-dropdown-menu');
+  if (menu) menu.classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('nav-dropdown');
+  const menu = document.getElementById('nav-dropdown-menu');
+  if (menu && dropdown && !dropdown.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+</script>
+</body>
+</html>

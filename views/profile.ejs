@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--sand:#f5ede0;--clay:#c9794a;--earth:#6b4226;--deep:#1a1008;--gold:#e8a838;--white:#fdfaf5;--card-bg:rgba(255,255,255,0.92);--shadow:0 8px 32px rgba(26,16,8,0.13);--radius:18px;--font-head:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--sand);color:var(--deep);min-height:100vh;}
+
+  /* ── NAVBAR (identical to index.ejs) ── */
+  nav{position:sticky;top:0;z-index:1000;background:rgba(26,16,8,0.96);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:68px;box-shadow:0 2px 24px rgba(0,0,0,0.25);}
+    .nav-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:900;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:8px;}
+  .nav-logo img{height:120px;width:auto;display:block;}
+  .nav-logo span{color:var(--sand);font-weight:400;font-size:1.1rem;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:var(--sand);font-size:0.92rem;font-weight:500;text-decoration:none;padding:7px 16px;border-radius:50px;transition:background 0.2s,color 0.2s;}
+  .nav-links a:hover,.nav-links a.active{background:var(--clay);color:#fff;}
+  .nav-user{display:flex;align-items:center;gap:10px;}
+  .nav-user-avatar{width:34px;height:34px;border-radius:50%;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0;}
+  .nav-user-name{color:var(--sand);font-size:0.88rem;font-weight:600;}
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-menu{display:none;position:absolute;top:54px;right:0;background:rgba(26,16,8,0.98);border-radius:12px;padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:2000;border:1px solid rgba(255,255,255,0.1);}
+  .nav-dropdown-menu.open{display:block;animation:fadeDown 0.2s ease both;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+  .nav-dropdown-menu a{display:flex;align-items:center;gap:8px;color:var(--sand);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:0.88rem;transition:background 0.2s;}
+  .nav-dropdown-menu a:hover{background:var(--clay);}
+  .nav-dropdown-menu .logout{color:#ff8080;}
+  .nav-dropdown-menu .logout:hover{background:#c0392b;color:#fff;}
+  .nav-dropdown-menu hr{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:4px 0;}
+  .hamburger{display:none;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);position:relative;z-index:1100;transition:background 0.2s;flex-shrink:0;}
+  .hamburger:hover{background:rgba(255,255,255,0.14);}
+  .hamburger .bar{width:22px;height:2px;background:var(--sand);border-radius:2px;position:absolute;transition:transform 0.35s cubic-bezier(0.23,1,0.32,1),opacity 0.25s ease,top 0.35s cubic-bezier(0.23,1,0.32,1);}
+  .hamburger .bar:nth-child(1){top:14px;}.hamburger .bar:nth-child(2){top:21px;}.hamburger .bar:nth-child(3){top:28px;}
+  .hamburger.open .bar:nth-child(1){top:21px;transform:rotate(45deg);}
+  .hamburger.open .bar:nth-child(2){opacity:0;transform:scaleX(0);}
+  .hamburger.open .bar:nth-child(3){top:21px;transform:rotate(-45deg);}
+  .mobile-menu{position:fixed;top:0;left:0;right:0;background:rgba(22,13,5,0.98);backdrop-filter:blur(20px);padding:88px 28px 36px;z-index:1050;display:flex;flex-direction:column;gap:0;box-shadow:0 12px 48px rgba(0,0,0,0.5);transform:translateY(-100%);opacity:0;pointer-events:none;transition:transform 0.4s cubic-bezier(0.23,1,0.32,1),opacity 0.3s ease;}
+  .mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:all;}
+  .mobile-menu a{color:var(--sand);text-decoration:none;padding:16px 4px;font-size:1.15rem;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:12px;opacity:0;transform:translateX(-18px);transition:color 0.2s,opacity 0.35s ease,transform 0.35s ease;}
+  .mobile-menu.open a{opacity:1;transform:translateX(0);}
+  .mobile-menu.open a:nth-child(1){transition-delay:0.07s;}.mobile-menu.open a:nth-child(2){transition-delay:0.12s;}.mobile-menu.open a:nth-child(3){transition-delay:0.17s;}.mobile-menu.open a:nth-child(4){transition-delay:0.22s;}.mobile-menu.open a:nth-child(5){transition-delay:0.27s;}.mobile-menu.open a:nth-child(6){transition-delay:0.32s;}
+  .mobile-menu a:hover{color:var(--gold);padding-left:12px;}.mobile-menu a:last-child{border-bottom:none;}
+  .mobile-menu .mob-cta{margin-top:20px;background:var(--gold);color:var(--deep)!important;font-weight:700!important;border-radius:50px;padding:14px 24px!important;justify-content:center;font-size:1rem!important;border-bottom:none!important;opacity:0;transform:translateY(10px)!important;transition:opacity 0.35s ease 0.32s,transform 0.35s ease 0.32s,background 0.2s!important;}
+  .mobile-menu.open .mob-cta{opacity:1!important;transform:translateY(0)!important;}
+  .mobile-menu .mob-cta:hover{background:var(--clay)!important;color:#fff!important;}
+  .menu-overlay{position:fixed;inset:0;z-index:1040;background:rgba(0,0,0,0.4);opacity:0;pointer-events:none;transition:opacity 0.3s ease;}
+  .menu-overlay.open{opacity:1;pointer-events:all;}
+
+  /* ── PROFILE CARD ── */
+  .page-wrap{max-width:600px;margin:0 auto;padding:48px 20px 80px;}
+  .profile-card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .profile-header{background:linear-gradient(135deg,var(--earth),var(--clay));padding:36px;text-align:center;color:#fff;}
+  .profile-avatar{width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:900;margin:0 auto 16px;border:3px solid rgba(255,255,255,0.3);}
+  .profile-name{font-family:var(--font-head);font-size:1.6rem;font-weight:900;margin-bottom:4px;}
+  .profile-email{font-size:0.88rem;opacity:0.8;word-break:break-all;}
+  .profile-body{padding:28px;}
+  .info-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f0e4d4;gap:12px;}
+  .info-row:last-child{border-bottom:none;}
+  .info-label{font-size:0.82rem;font-weight:700;color:#a08060;text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;}
+  .info-value{font-weight:600;color:var(--deep);font-size:0.93rem;text-align:right;word-break:break-word;}
+  .role-badge{background:#fce8dc;color:var(--earth);padding:3px 12px;border-radius:50px;font-size:0.78rem;font-weight:700;}
+  .admin-badge{background:#fef3d0;color:#7a5a00;}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:50px;border:none;font-family:var(--font-body);font-size:0.93rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s;text-decoration:none;}
+  .btn-clay{background:var(--clay);color:#fff;}.btn-clay:hover{background:var(--earth);}
+  .btn-danger{background:transparent;color:#c0392b;border:2px solid #c0392b;}.btn-danger:hover{background:#c0392b;color:#fff;}
+  .profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-top:30px;}
+  .profile-card-small{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;}
+  .profile-card-small ul{padding-left:18px;list-style:disc;}
+  .profile-card-small li{margin-bottom:10px;color:#4d3b29;font-size:0.94rem;line-height:1.5;}
+  .profile-card-small .item-meta{color:#7a5a3a;font-size:0.85rem;margin-top:4px;}
+  .btns{display:flex;gap:10px;flex-wrap:wrap;padding:20px 28px;background:#fdfaf5;border-top:1px solid #f0e4d4;}
+  footer{background:var(--deep);color:rgba(245,237,224,0.6);text-align:center;padding:28px 20px;font-size:0.82rem;margin-top:40px;}
+  footer strong{color:var(--gold);}
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px){
+    nav{padding:0 18px;}
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+  }
+  @media(max-width:600px){
+    .nav-logo span{display:none;}
+    .page-wrap{padding:24px 12px 60px;}
+    .profile-header{padding:28px 20px;}
+    .profile-avatar{width:64px;height:64px;font-size:1.5rem;}
+    .profile-name{font-size:1.3rem;}
+    .profile-body{padding:16px;}
+    .info-row{flex-direction:column;align-items:flex-start;gap:4px;padding:12px 0;}
+    .info-value{text-align:left;}
+    .btns{flex-direction:column;padding:16px;}
+    .btn{width:100%;justify-content:center;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR (identical to index.ejs) ── -->
+<nav>
+  <a class="nav-logo" href="/"><img src="/images/way-wiselogo.png" alt="Waywise"> <span></span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/budget">Budget</a>
+    <a href="/itinerary">Itinerary</a>
+    <a href="/weather">Weather</a>
+    <a href="/hotels">Hotels</a>
+    <div class="nav-dropdown" id="nav-dropdown">
+      <div class="nav-user" onclick="toggleDropdown()" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);transition:background 0.2s;">
+        <div class="nav-user-avatar"><%= fullUser.name.charAt(0).toUpperCase() %></div>
+        <span class="nav-user-name"><%= fullUser.name.split(' ')[0] %></span>
+        <span style="color:var(--sand);font-size:0.7rem;opacity:0.7;">▾</span>
+      </div>
+      <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+        <a href="/auth/profile">👤 My Profile</a>
+        <% if (fullUser.role === 'admin') { %>
+          <a href="/admin">⚙️ Admin Panel</a>
+        <% } %>
+        <hr/>
+        <a href="/auth/logout" class="logout">🚪 Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="hamburger" id="hamburger" onclick="toggleMobile()">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+</nav>
+
+<!-- Overlay + Mobile Menu -->
+<div class="menu-overlay" id="menu-overlay" onclick="closeMobile()"></div>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="/" onclick="closeMobile()">🏠 Home</a>
+  <a href="/budget" onclick="closeMobile()">💰 Budget</a>
+  <a href="/itinerary" onclick="closeMobile()">🗺️ Itinerary</a>
+  <a href="/weather" onclick="closeMobile()">🌤️ Weather</a>
+  <a href="/hotels" onclick="closeMobile()">🏨 Hotels</a>
+  <a href="/auth/profile" onclick="closeMobile()">👤 <%= fullUser.name %></a>
+  <a href="/auth/logout" onclick="closeMobile()" class="mob-cta">🚪 Logout</a>
+</div>
+
+<!-- ── PROFILE CARD ── -->
+<div class="page-wrap">
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="profile-avatar"><%= fullUser.name.charAt(0).toUpperCase() %></div>
+      <div class="profile-name"><%= fullUser.name %></div>
+      <div class="profile-email"><%= fullUser.email %></div>
+    </div>
+    <div class="profile-body">
+      <div class="info-row">
+        <span class="info-label">Full Name</span>
+        <span class="info-value"><%= fullUser.name %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Email</span>
+        <span class="info-value"><%= fullUser.email %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Phone</span>
+        <span class="info-value"><%= fullUser.phone || '—' %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Role</span>
+        <span class="info-value"><span class="role-badge <%= fullUser.role === 'admin' ? 'admin-badge' : '' %>"><%= fullUser.role %></span></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Member Since</span>
+        <span class="info-value"><%= new Date(fullUser.createdAt).toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'}) %></span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Last Login</span>
+        <span class="info-value"><%= new Date(fullUser.lastLogin).toLocaleString('en-IN') %></span>
+      </div>
+    </div>
+    <div class="btns">
+      <a href="/" class="btn btn-clay">🏠 Go Home</a>
+      <% if (fullUser.role === 'admin') { %>
+        <a href="/admin" class="btn btn-clay">⚙️ Admin Panel</a>
+      <% } %>
+      <a href="/auth/logout" class="btn btn-danger">🚪 Logout</a>
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <div class="profile-card-small">
+      <div class="card-title">🗺️ Saved Itineraries</div>
+      <% if (trips && trips.length) { %>
+        <ul>
+          <% trips.forEach(trip => { %>
+            <li style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+              <div>
+                <strong><%= trip.tripTitle || trip.destination %></strong><br/>
+                <span class="item-meta"><%= trip.origin ? trip.origin + ' → ' + trip.destination : trip.destination %> · <%= trip.numDays || 0 %> days · <%= new Date(trip.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %></span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <a href="/itinerary?tripId=<%= trip._id %>" class="btn btn-clay" style="padding:8px 14px;">View</a>
+                <button class="btn btn-danger" onclick="deleteTrip('<%= trip._id %>')">Delete</button>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <div style="color:#7a5a3a;font-size:0.95rem;">No saved itineraries yet.</div>
+      <% } %>
+    </div>
+    <div class="profile-card-small">
+      <div class="card-title">💰 Saved Budget Plans</div>
+      <% if (budgets && budgets.length) { %>
+        <ul>
+          <% budgets.forEach(budget => { %>
+            <li style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+              <div>
+                <strong><%= budget.tripName || 'Trip Budget' %></strong><br/>
+                <span class="item-meta"><%= budget.members?.length || 0 %> members · <%= budget.currency || '₹' %><%= budget.totalBudget || 0 %> · <%= new Date(budget.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %></span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <a href="/budget?budgetId=<%= budget._id %>" class="btn btn-clay" style="padding:8px 14px;">View</a>
+                <button class="btn btn-danger" style="padding:8px 14px;" onclick="deleteBudget('<%= budget._id %>')">Delete</button>
+              </div>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <div style="color:#7a5a3a;font-size:0.95rem;">No saved budgets yet.</div>
+      <% } %>
+    </div>
+    <div class="profile-card-small">
+      <div class="card-title">🌤️ Recent Weather Searches</div>
+      <% if (weatherSearches && weatherSearches.length) { %>
+        <ul>
+          <% weatherSearches.forEach(search => { %>
+            <li style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+              <div>
+                <strong><%= search.city %></strong><br/>
+                <span class="item-meta"><%= search.type %> · <%= search.temperature != null ? search.temperature + '°C' : 'No temp' %><% if (search.description) { %> · <%= search.description %><% } %> · <%= new Date(search.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) %></span>
+              </div>
+              <button class="btn btn-danger" style="padding:8px 14px;" onclick="deleteWeatherSearch('<%= search._id %>')">Delete</button>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <div style="color:#7a5a3a;font-size:0.95rem;">No weather searches saved yet.</div>
+      <% } %>
+    </div>
+  </div>
+</div>
+
+<footer>Made with ❤️ by <strong>Waywise</strong></footer>
+
+<script>
+function toggleDropdown(){
+  document.getElementById('nav-dropdown-menu').classList.toggle('open');
+}
+document.addEventListener('click',(e)=>{
+  const d=document.getElementById('nav-dropdown');
+  const m=document.getElementById('nav-dropdown-menu');
+  if(m && d && !d.contains(e.target)) m.classList.remove('open');
+});
+function toggleMobile(){
+  const m=document.getElementById('mobile-menu'),h=document.getElementById('hamburger'),o=document.getElementById('menu-overlay');
+  if(m.classList.contains('open')){closeMobile();return;}
+  m.classList.add('open');h.classList.add('open');o.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeMobile(){
+  document.getElementById('mobile-menu').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('menu-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMobile();});
+
+async function deleteTrip(tripId) {
+  if (!confirm('Delete this itinerary permanently?')) return;
+  try {
+    const res = await fetch(`/api/itinerary/${tripId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Unable to delete itinerary.');
+    location.reload();
+  } catch (err) {
+    alert(err.message || 'Delete failed.');
+  }
+}
+
+async function deleteBudget(budgetId) {
+  if (!confirm('Delete this budget plan permanently?')) return;
+  try {
+    const res = await fetch(`/api/budget/${budgetId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Unable to delete budget.');
+    location.reload();
+  } catch (err) {
+    alert(err.message || 'Delete failed.');
+  }
+}
+
+async function deleteWeatherSearch(searchId) {
+  if (!confirm('Delete this saved weather search?')) return;
+  try {
+    const res = await fetch(`/api/weather-search/${searchId}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('Unable to delete search entry.');
+    location.reload();
+  } catch (err) {
+    alert(err.message || 'Delete failed.');
+  }
+}
+</script>
+</body>
+</html>

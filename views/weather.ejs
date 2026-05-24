@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><%= title %></title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--sand:#f5ede0;--clay:#c9794a;--earth:#6b4226;--deep:#1a1008;--sky:#3a7ca5;--leaf:#4a7c59;--gold:#e8a838;--white:#fdfaf5;--card-bg:rgba(255,255,255,0.92);--shadow:0 8px 32px rgba(26,16,8,0.13);--radius:18px;--font-head:'Playfair Display',serif;--font-body:'DM Sans',sans-serif;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font-body);background:var(--sand);color:var(--deep);min-height:100vh;}
+  nav{position:sticky;top:0;z-index:1000;background:rgba(26,16,8,0.96);backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:68px;box-shadow:0 2px 24px rgba(0,0,0,0.25);}
+  .nav-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:900;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:8px;}
+  .nav-logo img{height:120px;width:auto;display:block;}
+  .nav-logo span{color:var(--sand);font-weight:400;font-size:1.1rem;}
+  .nav-links{display:flex;align-items:center;gap:6px;}
+  .nav-links a{color:var(--sand);font-size:0.92rem;font-weight:500;text-decoration:none;padding:7px 16px;border-radius:50px;transition:background 0.2s;}
+  .nav-links a:hover,.nav-links a.active{background:var(--clay);color:#fff;}
+  .nav-btn{background:var(--gold)!important;color:var(--deep)!important;font-weight:700!important;border-radius:50px!important;padding:8px 22px!important;}
+  .page-hero{background:linear-gradient(135deg,#1a3a5c,#2a5c85 60%,#3a7ca5);padding:48px 24px 56px;text-align:center;}
+  .page-hero h1{font-family:var(--font-head);font-size:clamp(2rem,5vw,3.2rem);color:#fdfaf5;font-weight:900;margin-bottom:10px;}
+  .page-hero p{color:rgba(218,238,255,0.75);font-size:1rem;}
+  .page-wrap{max-width:1100px;margin:0 auto;padding:48px 20px 80px;}
+  .card{background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;}
+  .card-title{font-family:var(--font-head);font-size:1.2rem;font-weight:700;margin-bottom:14px;color:var(--earth);}
+  input{font-family:var(--font-body);font-size:0.93rem;border:1.5px solid #e0d0bc;border-radius:10px;padding:10px 14px;outline:none;width:100%;background:var(--white);color:var(--deep);transition:border-color 0.2s;}
+  input:focus{border-color:var(--sky);}
+  .btn{display:inline-flex;align-items:center;gap:6px;background:var(--clay);color:#fff;padding:10px 22px;border-radius:50px;border:none;font-family:var(--font-body);font-size:0.93rem;font-weight:600;cursor:pointer;transition:background 0.2s,transform 0.15s;}
+  .btn:hover{background:var(--earth);transform:translateY(-2px);}
+  .btn-sky{background:var(--sky);}.btn-sky:hover{background:#2a5c85;}
+  .quickbtns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .weather-loading{color:var(--sky);font-size:0.9rem;padding:12px 0;}
+  .weather-error{color:#c0392b;font-size:0.88rem;padding:10px 0;}
+  footer{background:var(--deep);color:rgba(245,237,224,0.6);text-align:center;padding:28px 20px;font-size:0.82rem;}
+  footer strong{color:var(--gold);}
+  @media(max-width:768px){nav{padding:0 18px;}.nav-links{display:none;}.page-wrap{padding:28px 16px 60px;}}
+
+  .nav-dropdown{position:relative;}
+  .nav-dropdown-menu{display:none;position:absolute;top:54px;right:0;background:rgba(26,16,8,0.98);border-radius:12px;padding:8px;min-width:180px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:2000;border:1px solid rgba(255,255,255,0.1);}
+  .nav-dropdown-menu.open{display:block;animation:fadeDown 0.2s ease both;}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+  .nav-dropdown-menu a{display:flex;align-items:center;gap:8px;color:var(--sand);text-decoration:none;padding:10px 14px;border-radius:8px;font-size:0.88rem;transition:background 0.2s;}
+  .nav-dropdown-menu a:hover{background:var(--clay);}
+  .nav-dropdown-menu .logout{color:#ff8080;}
+  .nav-dropdown-menu .logout:hover{background:#c0392b;color:#fff;}
+  .nav-dropdown-menu hr{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:4px 0;}
+
+</style>
+</head>
+<body>
+<nav>
+ <a class="nav-logo" href="/"><img src="/images/way-wiselogo.png" alt="Waywise"> <span></span></a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/budget">Budget</a>
+    <a href="/itinerary">Itinerary</a>
+    <a href="/weather" class="active">Weather</a>
+    <a href="/hotels">Hotels</a>
+    <% if (isLoggedIn) { %>
+      <div class="nav-dropdown" id="nav-dropdown">
+        <div class="nav-user" onclick="toggleDropdown()" style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);transition:background 0.2s;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--clay);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;">
+            <%= currentUser.charAt(0).toUpperCase() %>
+          </div>
+          <span style="color:var(--sand);font-size:0.88rem;font-weight:600;"><%= currentUser.split(" ")[0] %></span>
+          <span style="color:var(--sand);font-size:0.7rem;opacity:0.7;">&#9660;</span>
+        </div>
+        <div class="nav-dropdown-menu" id="nav-dropdown-menu">
+          <a href="/auth/profile">&#128100; My Profile</a>
+          <% if (currentRole === "admin") { %>
+            <a href="/admin">&#9881;&#65039; Admin Panel</a>
+          <% } %>
+          <hr/>
+          <a href="/auth/logout" class="logout">&#128682; Logout</a>
+        </div>
+      </div>
+    <% } else { %>
+      <a href="/auth/login" class="nav-btn">Login / Signup</a>
+    <% } %>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <h1>🌤️ Live Weather</h1>
+  <p>Search any city for real-time conditions and a 5-day forecast</p>
+</div>
+
+<div class="page-wrap">
+  <div class="card">
+    <div class="card-title">🔍 Search City</div>
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+      <input id="weather-city-input" type="text" placeholder="Enter city name…" style="flex:1;" onkeydown="if(event.key==='Enter')fetchWeather()"/>
+      <button class="btn btn-sky" onclick="fetchWeather()">🔍 Get Weather</button>
+    </div>
+    <div id="weather-display"><div style="text-align:center;color:#a08060;padding:30px 0;">Enter a city name to see live weather ☁️</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📌 Popular Destinations</div>
+    <div class="quickbtns">
+      <button class="btn btn-sky" onclick="fetchWeatherFor('Paris')">🗼 Paris</button>
+      <button class="btn btn-sky" onclick="fetchWeatherFor('Tokyo')">⛩️ Tokyo</button>
+      <button class="btn btn-sky" onclick="fetchWeatherFor('New York')">🗽 New York</button>
+      <button class="btn btn-sky" onclick="fetchWeatherFor('Dubai')">🏙️ Dubai</button>
+      <button class="btn btn-sky" onclick="fetchWeatherFor('Bali')">🌴 Bali</button>
+      <button class="btn btn-sky" onclick="fetchWeatherFor('London')">🎡 London</button>
+      <button class="btn btn-sky" onclick="fetchWeatherFor('Mumbai')">🌆 Mumbai</button>
+    </div>
+    <div id="saved-weather"></div>
+  </div>
+</div>
+
+<footer>Made with ❤️ by <strong>Waywise</strong></footer>
+
+<script>
+function getWeatherIcon(main){const icons={'Thunderstorm':'⛈️','Drizzle':'🌦️','Rain':'🌧️','Snow':'❄️','Clear':'☀️','Clouds':'⛅','Mist':'🌫️','Fog':'🌫️','Haze':'🌫️'};return icons[main]||'🌤️';}
+function getTip(main){if(main==='Rain'||main==='Drizzle')return'☂️ Pack an umbrella!';if(main==='Snow')return'🧤 Dress warm!';if(main==='Clear')return'🕶️ Sunny day ahead!';if(main==='Thunderstorm')return'⚡ Stay indoors!';return'🌿 Pleasant weather!';}
+
+async function fetchWeather(){
+  const city=document.getElementById('weather-city-input').value.trim();
+  if(!city)return;
+  const display=document.getElementById('weather-display');
+  display.innerHTML='<div class="weather-loading">⏳ Fetching weather for <strong>'+city+'</strong>…</div>';
+  try{
+    const res=await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    renderWeatherCard(data,display);
+    fetchForecast(city,display);
+  }catch(e){display.innerHTML='<div class="weather-error">❌ City not found.</div>';}
+}
+
+async function fetchWeatherFor(city){
+  const display=document.getElementById('saved-weather');
+  display.innerHTML='<div class="weather-loading">⏳ Loading '+city+'…</div>';
+  try{
+    const res=await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
+    const data=await res.json();
+    if(data.error)throw new Error(data.error);
+    renderWeatherCard(data,display);
+    fetchForecast(city,display);
+  }catch(e){display.innerHTML='<div class="weather-error">❌ Could not load weather.</div>';}
+}
+
+function renderWeatherCard(data,container){
+  const icon=getWeatherIcon(data.weather[0].main),tip=getTip(data.weather[0].main);
+  const sunrise=new Date(data.sys.sunrise*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  const sunset=new Date(data.sys.sunset*1000).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  container.innerHTML=`<div style="background:linear-gradient(135deg,#3a7ca5,#1a4d6e);border-radius:18px;padding:28px 24px;color:#fff;margin-bottom:16px;position:relative;overflow:hidden;">
+    <div style="font-size:3rem;margin-bottom:8px;">${icon}</div>
+    <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px;">${data.name}, ${data.sys.country}</div>
+    <div style="font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;line-height:1;">${Math.round(data.main.temp)}°C</div>
+    <div style="font-size:0.95rem;opacity:0.85;text-transform:capitalize;margin:6px 0;">${data.weather[0].description}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+      <span style="background:rgba(255,255,255,0.15);border-radius:8px;padding:4px 12px;font-size:0.8rem;">💧 ${data.main.humidity}% humidity</span>
+      <span style="background:rgba(255,255,255,0.15);border-radius:8px;padding:4px 12px;font-size:0.8rem;">💨 ${data.wind.speed} m/s</span>
+      <span style="background:rgba(255,255,255,0.15);border-radius:8px;padding:4px 12px;font-size:0.8rem;">🌡️ Feels ${Math.round(data.main.feels_like)}°C</span>
+      <span style="background:rgba(255,255,255,0.15);border-radius:8px;padding:4px 12px;font-size:0.8rem;">🌅 ${sunrise}</span>
+      <span style="background:rgba(255,255,255,0.15);border-radius:8px;padding:4px 12px;font-size:0.8rem;">🌇 ${sunset}</span>
+    </div>
+    <div style="margin-top:14px;background:rgba(255,255,255,0.12);border-radius:10px;padding:10px 14px;font-size:0.88rem;font-weight:600;">${tip}</div>
+  </div>`;
+}
+
+async function fetchForecast(city,container){
+  try{
+    const res=await fetch(`/api/forecast?city=${encodeURIComponent(city)}`);
+    const data=await res.json();
+    if(data.cod!=='200')return;
+    const days={};data.list.forEach(item=>{const d=item.dt_txt.split(' ')[0];if(!days[d])days[d]=item;});
+    const entries=Object.values(days).slice(0,5),dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    let html='<div style="font-weight:700;font-size:1rem;color:var(--earth);margin-bottom:12px;">📆 5-Day Forecast</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;">';
+    entries.forEach(e=>{const d=new Date(e.dt_txt),ic=getWeatherIcon(e.weather[0].main);html+=`<div style="background:rgba(58,124,165,0.1);border-radius:12px;padding:14px 8px;text-align:center;border:1px solid rgba(58,124,165,0.2);"><div style="font-size:0.78rem;font-weight:700;color:var(--earth);margin-bottom:4px;">${dn[d.getDay()]}<br><span style="font-weight:400;color:#a08060;">${d.getDate()}/${d.getMonth()+1}</span></div><div style="font-size:1.6rem;margin:6px 0;">${ic}</div><div style="font-size:0.9rem;font-weight:700;color:var(--sky);">${Math.round(e.main.temp)}°C</div><div style="font-size:0.72rem;color:#a08060;margin-top:3px;text-transform:capitalize;">${e.weather[0].description}</div></div>`;});
+    html+='</div>';container.innerHTML+=html;
+  }catch(e){}
+}
+
+// ── PROFILE DROPDOWN ──
+function toggleDropdown() {
+  const menu = document.getElementById('nav-dropdown-menu');
+  if (menu) menu.classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('nav-dropdown');
+  const menu = document.getElementById('nav-dropdown-menu');
+  if (menu && dropdown && !dropdown.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
+</script>
+</body>
+</html>
