@@ -1,5 +1,5 @@
 waywise/
-├── .env                ← paste content here
+├── .env                
 ├── .gitignore
 ├── server.js
 ├── package.json
@@ -15,4 +15,4 @@ waywise/
 │   └── admin.js
 ├── middleware/
 │   └── auth.js
-└── views/              ← create this empty folder (we'll fill it next)
+└── views/             
